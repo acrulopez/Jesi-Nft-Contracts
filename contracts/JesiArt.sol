@@ -16,10 +16,24 @@ contract JesiArt is ERC721URIStorage {
         maxTokens = _maxTokens;
     }
 
-    function mint(address _nftOwner, string memory _tokenURI) public {
-        require(tokenCounter <= maxTokens);
-        _mint(_nftOwner, tokenCounter);
-        _setTokenURI(tokenCounter, _tokenURI);
+    function mint(address _nftOwner, string memory _tokenURI)
+        public
+        returns (uint256)
+    {
+        require(tokenCounter < maxTokens);
+        uint256 tokenId = tokenCounter;
+        _mint(_nftOwner, tokenId);
+        _setTokenURI(tokenId, _tokenURI);
         tokenCounter = tokenCounter + 1;
+        return tokenId;
+    }
+
+    function burn(uint256 tokenId) public {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "JesiArt: only owner or approved can burn a token"
+        );
+        _burn(tokenId);
+        tokenCounter -= 1;
     }
 }
