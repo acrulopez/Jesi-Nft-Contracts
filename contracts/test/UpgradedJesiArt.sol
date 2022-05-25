@@ -5,11 +5,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract JesiArt is ERC721URIStorage, Initializable {
+contract UpgradedJesiArt is ERC721URIStorage, Initializable {
     string private __name;
     string private __symbol;
     uint256 public tokenCounter;
     uint256 public maxTokens;
+    uint256 public foo;
 
     constructor(
         string memory _name,
@@ -37,6 +38,10 @@ contract JesiArt is ERC721URIStorage, Initializable {
 
     function symbol() public view override returns (string memory) {
         return __symbol;
+    }
+
+    function setFoo(uint256 _foo) public {
+        foo = _foo;
     }
 
     function setName(string memory _name) public {
