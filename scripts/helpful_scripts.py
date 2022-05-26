@@ -34,7 +34,6 @@ def encode_function_data(initializer=None, *args):
     if len(args) == 0 or initializer == None:
         return eth_utils.to_bytes(hexstr="0x")
     else:
-        print(*args)
         return initializer.encode_input(*args)
 
 

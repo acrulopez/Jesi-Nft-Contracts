@@ -39,10 +39,6 @@ contract JesiArt is ERC721URIStorage, Initializable {
         return __symbol;
     }
 
-    function setName(string memory _name) public {
-        __name = _name;
-    }
-
     function mint(address _nftOwner, string memory _tokenURI)
         public
         returns (uint256)
