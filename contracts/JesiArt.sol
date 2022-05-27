@@ -8,27 +8,27 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 contract JesiArt is ERC721URIStorage, Initializable {
     string private __name;
     string private __symbol;
-    uint256 public tokenCounter;
-    uint256 public maxTokens;
+    uint256 public totalSupply;
+    uint256 public maxTotalSupply;
 
     constructor(
         string memory _name,
         string memory _token,
-        uint256 _maxTokens
+        uint256 _maxTotalSupply
     ) ERC721(_name, _token) {
         __name = _name;
         __symbol = _token;
-        maxTokens = _maxTokens;
+        maxTotalSupply = _maxTotalSupply;
     }
 
     function initialize(
         string memory _name,
         string memory _token,
-        uint256 _maxTokens
+        uint256 _maxTotalSupply
     ) public initializer {
         __name = _name;
         __symbol = _token;
-        maxTokens = _maxTokens;
+        maxTotalSupply = _maxTotalSupply;
     }
 
     function name() public view override returns (string memory) {
@@ -43,11 +43,11 @@ contract JesiArt is ERC721URIStorage, Initializable {
         public
         returns (uint256)
     {
-        require(tokenCounter < maxTokens);
-        uint256 tokenId = tokenCounter;
+        require(totalSupply < maxTotalSupply);
+        uint256 tokenId = totalSupply;
         _mint(_nftOwner, tokenId);
         _setTokenURI(tokenId, _tokenURI);
-        tokenCounter = tokenCounter + 1;
+        totalSupply = totalSupply + 1;
         return tokenId;
     }
 
@@ -57,6 +57,6 @@ contract JesiArt is ERC721URIStorage, Initializable {
             "JesiArt: only owner or approved can burn a token"
         );
         _burn(tokenId);
-        tokenCounter -= 1;
+        totalSupply -= 1;
     }
 }

@@ -50,7 +50,7 @@ def test_proxy():
 
     assert proxy_jesi_art.name() == NAME
     assert proxy_jesi_art.symbol() == TOKEN
-    assert proxy_jesi_art.maxTokens() == MAX_TOKENS
+    assert proxy_jesi_art.maxTotalSupply() == MAX_TOKENS
     assert jesi_art.name() == "foo"
 
     with pytest.raises(exceptions.VirtualMachineError):
@@ -76,7 +76,7 @@ def test_proxy():
 
     assert proxy_upgraded_jesi_art.name() == NAME
     assert proxy_upgraded_jesi_art.symbol() == TOKEN
-    assert proxy_upgraded_jesi_art.maxTokens() == MAX_TOKENS
+    assert proxy_upgraded_jesi_art.maxTotalSupply() == MAX_TOKENS
     assert jesi_art.name() == "foo"
 
     with pytest.raises(exceptions.VirtualMachineError):

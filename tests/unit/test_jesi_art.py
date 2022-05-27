@@ -35,6 +35,6 @@ def test_burn(skip_if_not_local):
     tx = jesi_art.burn(token_id, {"from": account})
     tx.wait(1)
 
-    assert jesi_art.tokenCounter() == 0
+    assert jesi_art.totalSupply() == 0
     with pytest.raises(exceptions.VirtualMachineError):
         jesi_art.ownerOf(token_id)
