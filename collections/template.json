@@ -1,0 +1,7 @@
+{
+  "name": "Hexagonitos",
+  "token": "HEX",
+  "description": "An adorable hexagonito!",
+  "maxSupply": 50,
+  "generativeUri": "Link to the local folder. Ex: /Users/tupapichulo/Downloads/swifty-grid-2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Swifty grid",
+  "token": "SGRID",
+  "description": "An adorable Swifty Grid!",
+  "maxSupply": 50,
+  "generativeUri": "https://ipfs.io/ipfs/QmZfxHFySXRoeLcu3j2hZb5fFkAUCz2AVvTJe2m7NkizDb",
+  "proxy_admin": "0x602C71e4DAC47a042Ee7f46E0aee17F94A3bA0B6",
+  "proxy_contract": "0xE7eD6747FaC5360f88a2EFC03E00d25789F69291"
+}

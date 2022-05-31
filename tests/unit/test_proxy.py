@@ -5,11 +5,11 @@ from scripts.helpful_scripts import (
     upgrade,
 )
 from brownie import (
-    JesiArt,
+    Collection,
     ProxyAdmin,
     TransparentUpgradeableProxy,
     Contract,
-    UpgradedJesiArt,
+    UpgradedCollection,
     exceptions,
 )
 
@@ -21,12 +21,14 @@ def test_proxy():
     NAME = "Jesi's generative art"
     TOKEN = "JESIART"
     MAX_TOKENS = 50
+    URI = "URI"
 
     account = get_account()
-    jesi_art = JesiArt.deploy(
+    jesi_art = Collection.deploy(
         "foo",
         "foo",
         5,
+        "foo",
         {"from": account},
         publish_source=get_from_config("verify", False),
     )
@@ -36,7 +38,7 @@ def test_proxy():
         publish_source=get_from_config("verify", False),
     )
 
-    initializer = (jesi_art.initialize, NAME, TOKEN, MAX_TOKENS)
+    initializer = (jesi_art.initialize, NAME, TOKEN, MAX_TOKENS, URI)
 
     proxy = TransparentUpgradeableProxy.deploy(
         jesi_art.address,
@@ -51,16 +53,18 @@ def test_proxy():
     assert proxy_jesi_art.name() == NAME
     assert proxy_jesi_art.symbol() == TOKEN
     assert proxy_jesi_art.maxTotalSupply() == MAX_TOKENS
+    assert proxy_jesi_art.collectionURI() == URI
     assert jesi_art.name() == "foo"
 
     with pytest.raises(exceptions.VirtualMachineError):
-        proxy_jesi_art.initialize("a", "a", 1, {"from": account})
+        proxy_jesi_art.initialize("a", "a", 1, "a", {"from": account})
 
     # Upgrade contract
-    upgraded_jesi_art = UpgradedJesiArt.deploy(
+    upgraded_jesi_art = UpgradedCollection.deploy(
         "foo2",
         "foo2",
         6,
+        "URI2",
         {"from": account},
         publish_source=get_from_config("verify", False),
     )
@@ -77,7 +81,8 @@ def test_proxy():
     assert proxy_upgraded_jesi_art.name() == NAME
     assert proxy_upgraded_jesi_art.symbol() == TOKEN
     assert proxy_upgraded_jesi_art.maxTotalSupply() == MAX_TOKENS
+    assert proxy_upgraded_jesi_art.collectionURI() == URI
     assert jesi_art.name() == "foo"
 
     with pytest.raises(exceptions.VirtualMachineError):
-        proxy_upgraded_jesi_art.initialize("a", "a", 1, {"from": account})
+        proxy_upgraded_jesi_art.initialize("a", "a", 1, "a", {"from": account})
