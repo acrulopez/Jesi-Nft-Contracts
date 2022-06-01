@@ -13,22 +13,16 @@ from brownie import (
     exceptions,
 )
 
+from tests.conftest import deploy_arguments, deploy_arguments_proxy
+
 import pytest
 
 
-def test_proxy():
-
-    NAME = "Jesi's generative art"
-    TOKEN = "JESIART"
-    MAX_TOKENS = 50
-    URI = "URI"
+def test_proxy(deploy_arguments, deploy_arguments_proxy):
 
     account = get_account()
-    jesi_art = Collection.deploy(
-        "foo",
-        "foo",
-        5,
-        "foo",
+    collection = Collection.deploy(
+        *deploy_arguments,
         {"from": account},
         publish_source=get_from_config("verify", False),
     )
@@ -38,33 +32,30 @@ def test_proxy():
         publish_source=get_from_config("verify", False),
     )
 
-    initializer = (jesi_art.initialize, NAME, TOKEN, MAX_TOKENS, URI)
+    initializer = (collection.initialize, *deploy_arguments_proxy)
 
     proxy = TransparentUpgradeableProxy.deploy(
-        jesi_art.address,
+        collection.address,
         proxy_admin.address,
         encode_function_data(*initializer),
         {"from": account, "gas_limit": 1000000},
         publish_source=get_from_config("verify", False),
     )
 
-    proxy_jesi_art = Contract.from_abi("Jesi Art", proxy.address, jesi_art.abi)
+    proxy_collection = Contract.from_abi("Jesi Art", proxy.address, collection.abi)
 
-    assert proxy_jesi_art.name() == NAME
-    assert proxy_jesi_art.symbol() == TOKEN
-    assert proxy_jesi_art.maxTotalSupply() == MAX_TOKENS
-    assert proxy_jesi_art.collectionURI() == URI
-    assert jesi_art.name() == "foo"
+    assert proxy_collection.name() == deploy_arguments_proxy[0]
+    assert proxy_collection.symbol() == deploy_arguments_proxy[1]
+    assert proxy_collection.maxTotalSupply() == deploy_arguments_proxy[2]
+    assert proxy_collection.collectionURI() == deploy_arguments_proxy[3]
+    assert collection.name() == deploy_arguments[0]
 
     with pytest.raises(exceptions.VirtualMachineError):
-        proxy_jesi_art.initialize("a", "a", 1, "a", {"from": account})
+        proxy_collection.initialize(*deploy_arguments, {"from": account})
 
     # Upgrade contract
     upgraded_jesi_art = UpgradedCollection.deploy(
-        "foo2",
-        "foo2",
-        6,
-        "URI2",
+        *deploy_arguments_proxy,
         {"from": account},
         publish_source=get_from_config("verify", False),
     )
@@ -78,11 +69,11 @@ def test_proxy():
     proxy_upgraded_jesi_art.setFoo(24, {"from": account})
     assert proxy_upgraded_jesi_art.foo() == 24
 
-    assert proxy_upgraded_jesi_art.name() == NAME
-    assert proxy_upgraded_jesi_art.symbol() == TOKEN
-    assert proxy_upgraded_jesi_art.maxTotalSupply() == MAX_TOKENS
-    assert proxy_upgraded_jesi_art.collectionURI() == URI
-    assert jesi_art.name() == "foo"
+    assert proxy_upgraded_jesi_art.name() == deploy_arguments_proxy[0]
+    assert proxy_upgraded_jesi_art.symbol() == deploy_arguments_proxy[1]
+    assert proxy_upgraded_jesi_art.maxTotalSupply() == deploy_arguments_proxy[2]
+    assert proxy_upgraded_jesi_art.collectionURI() == deploy_arguments_proxy[3]
+    assert collection.name() == deploy_arguments[0]
 
     with pytest.raises(exceptions.VirtualMachineError):
-        proxy_upgraded_jesi_art.initialize("a", "a", 1, "a", {"from": account})
+        proxy_upgraded_jesi_art.initialize(*deploy_arguments, {"from": account})
