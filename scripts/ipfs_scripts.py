@@ -10,6 +10,8 @@ from scripts.helpful_scripts import (
 import os
 import json
 
+
+# Headers for the post call to pinata
 HEADERS = {
     "pinata_api_key": os.environ["PINATA_API_KEY"],
     "pinata_secret_api_key": os.environ["PINATA_SECRET_API_KEY"],
@@ -70,8 +72,6 @@ def local_directory_to_ipfs(directory):
     # Check if it's empty
     if len(os.listdir(directory)) == 0:
         raise Exception(f"The directory {directory} is empty")
-
-    # Headers for the post call to pinata
 
     # Create the files data for the post request
     files = []

@@ -41,6 +41,7 @@ def create_new_collection(collection_filename):
     token = collection_json["token"]
     max_supply = collection_json["maxSupply"]
     generativeUri = collection_json["generativeUri"]
+    mintFee = collection_json["mintFee"]
 
     # Upload generative art to IPFS and set it on collection_json
     generativeUri = local_directory_to_ipfs(generativeUri)
@@ -52,7 +53,7 @@ def create_new_collection(collection_filename):
     # Upload collection json to IPFS
     collectionUri = json_to_ipfs(collection_json)
     proxy_addresses_json = deploy_collection_w_proxy(
-        name, token, max_supply, collectionUri
+        name, token, max_supply, collectionUri, mintFee
     )
     collection_json.update(proxy_addresses_json)
 

@@ -2,13 +2,15 @@ from scripts.helpful_scripts import get_account, get_from_config, encode_functio
 from brownie import Collection, ProxyAdmin, TransparentUpgradeableProxy
 
 
-def deploy_collection(name, token, max_supply, ipfs_uri):
+def deploy_collection(name, token, max_supply, ipfs_uri, mint_fee):
     """Deploy the Collection contract
 
     Args:
         name (str): Name of the ERC721 token
         token (str): Token of the ERC721
         max_supply (uint): Maximum number of tokens that can be minted
+        ipfs_uri (str): URI of the generative art root in IPFS
+        mint_fee (int): Fee to be able to mint a new token
 
     Returns:
         str: address of the new contract
@@ -19,6 +21,7 @@ def deploy_collection(name, token, max_supply, ipfs_uri):
         token,
         max_supply,
         ipfs_uri,
+        mint_fee,
         {"from": account},
         publish_source=get_from_config("verify", False),
     )
@@ -26,7 +29,7 @@ def deploy_collection(name, token, max_supply, ipfs_uri):
     return collection
 
 
-def deploy_collection_w_proxy(name, token, max_supply, ipfs_uri):
+def deploy_collection_w_proxy(name, token, max_supply, ipfs_uri, mint_fee):
     """Deploy a collection using the latest Collection contract.
     This will deploy the proxya and the proxy_admin
 
@@ -35,6 +38,7 @@ def deploy_collection_w_proxy(name, token, max_supply, ipfs_uri):
         token (str): Token of the ERC721
         max_supply (uint): Maximum number of tokens that can be minted
         ipfs_uri (str): URI of the generative art root in IPFS
+        mint_fee (int): Fee to be able to mint a new token
 
     Returns:
         dict: json containing the address of the proxy and the proxy_admin
@@ -43,7 +47,7 @@ def deploy_collection_w_proxy(name, token, max_supply, ipfs_uri):
 
     # Deploy a Collection contract if there are none deployed
     collection = (
-        deploy_collection(name, token, max_supply, ipfs_uri)
+        deploy_collection(name, token, max_supply, ipfs_uri, mint_fee)
         if len(Collection) == 0
         else Collection[-1]
     )
@@ -55,7 +59,7 @@ def deploy_collection_w_proxy(name, token, max_supply, ipfs_uri):
     )
 
     # Create the initializer and deploy the proxy
-    initializer = (collection.initialize, name, token, max_supply, ipfs_uri)
+    initializer = (collection.initialize, name, token, max_supply, ipfs_uri, mint_fee)
     proxy = TransparentUpgradeableProxy.deploy(
         collection.address,
         proxy_admin.address,

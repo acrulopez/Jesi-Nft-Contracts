@@ -3,5 +3,6 @@
   "token": "SGRID",
   "description": "An adorable Swifty Grid!",
   "maxSupply": 50,
+  "mintFee": 0,
   "generativeUri": "/Users/alex/Downloads/swifty-grid"
 }
