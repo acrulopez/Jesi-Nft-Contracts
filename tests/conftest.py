@@ -4,18 +4,25 @@ from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     FORKED_LOCAL_ENVIRONMENTS,
 )
+from scripts.deploy import deploy_collection_manager
 
 
 @pytest.fixture
-def deploy_arguments():
-    # [name, symbol, maxTotalSupply, collectionURI, mintFee]
-    return ["collection_name", "collection_symbol", 3, "collection_uri", 0]
+def deployments():
+    return deploy_collection_manager()
 
 
 @pytest.fixture
-def deploy_arguments_proxy():
-    # [name, symbol, maxTotalSupply, collectionURI, mintFee]
-    return ["proxy_name", "proxy_symbol", 2, "proxy_uri", 0]
+def collection_arguments():
+    # [name, symbol, description, ipfsHash, maxTotalSupply, mintFee]
+    return [
+        "collection_name",
+        "collection_symbol",
+        "description",
+        "hash on ipfs",
+        5,
+        1,
+    ]
 
 
 @pytest.fixture

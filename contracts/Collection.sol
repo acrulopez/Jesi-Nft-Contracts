@@ -2,42 +2,39 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract Collection is ERC721URIStorage, Initializable, Ownable {
+contract Collection is
+    ERC721URIStorage,
+    Initializable,
+    UUPSUpgradeable,
+    Ownable
+{
     string private __name;
     string private __symbol;
-    string public collectionURI;
-    uint256 public totalSupply;
+    string public description;
+    string public ipfsHash;
     uint256 public maxTotalSupply;
-    uint256 mintFee;
+    uint256 public mintFee;
+    uint256 public totalSupply;
 
-    constructor(
-        string memory _name,
-        string memory _token,
-        uint256 _maxTotalSupply,
-        string memory _collectionURI,
-        uint256 _mintFee
-    ) ERC721(_name, _token) {
-        __name = _name;
-        __symbol = _token;
-        collectionURI = _collectionURI;
-        maxTotalSupply = _maxTotalSupply;
-        mintFee = _mintFee;
-    }
+    constructor() ERC721("", "") {}
 
     function initialize(
         string memory _name,
         string memory _token,
+        string memory _description,
+        string memory _ipfsHash,
         uint256 _maxTotalSupply,
-        string memory _collectionURI,
         uint256 _mintFee
     ) public initializer {
         __name = _name;
         __symbol = _token;
-        collectionURI = _collectionURI;
+        description = _description;
+        ipfsHash = _ipfsHash;
         maxTotalSupply = _maxTotalSupply;
         mintFee = _mintFee;
         _transferOwnership(_msgSender());
@@ -51,30 +48,36 @@ contract Collection is ERC721URIStorage, Initializable, Ownable {
         return __symbol;
     }
 
-    function mint(address _nftOwner, string memory _tokenURI)
+    function mint(address _tokenOwner, string memory _tokenURI)
         public
         payable
         returns (uint256)
     {
-        require(totalSupply < maxTotalSupply);
-        require(msg.value >= mintFee);
+        require(
+            totalSupply < maxTotalSupply,
+            "This collection has reached its maximum tokens"
+        );
+        require(
+            msg.value == mintFee,
+            "Please send exactly the minting fee of this collection."
+        );
+        payable(owner()).transfer(address(this).balance);
         uint256 tokenId = totalSupply;
-        _mint(_nftOwner, tokenId);
+        _mint(_tokenOwner, tokenId);
         _setTokenURI(tokenId, _tokenURI);
         ++totalSupply;
         return tokenId;
     }
 
-    function burn(uint256 tokenId) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "Collection: only owner or approved can burn a token"
-        );
-        _burn(tokenId);
-        --totalSupply;
-    }
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyOwner
+    {}
 
     function withdraw() public onlyOwner {
-        payable(msg.sender).transfer(address(this).balance);
+        payable(owner()).transfer(address(this).balance);
     }
+
+    receive() external payable {}
 }
