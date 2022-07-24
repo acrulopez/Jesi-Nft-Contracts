@@ -9,7 +9,7 @@ from brownie import (
 )
 from tests.conftest import skip_if_not_local, collection_arguments, deployments
 from web3 import Web3
-from scripts.helpful_scripts import get_from_config, encode_function_data
+from scripts.helpful_scripts import get_from_config, encode_function_data, get_account
 from scripts.deploy import deploy_collection_manager
 
 
@@ -57,6 +57,17 @@ def test_create_collection(skip_if_not_local, deployments, collection_arguments)
     ]
     for getter, value in zip(getters, collection_arguments):
         assert getter() == value
+
+    assert (
+        len(
+            (
+                collection_manager_proxy.events.get_sequence(
+                    0, to_block=None, event_type="CollectionCreated"
+                )
+            )
+        )
+        == 1
+    )
 
 
 def test_non_free_mint(skip_if_not_local, deployments, collection_arguments):

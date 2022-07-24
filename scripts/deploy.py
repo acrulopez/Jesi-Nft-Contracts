@@ -1,8 +1,5 @@
 from scripts.helpful_scripts import get_account, get_from_config, encode_function_data
-from brownie import Collection, CollectionManager, ERC1967Proxy, Contract
-
-
-account = get_account()
+from brownie import Collection, CollectionManager, ERC1967Proxy, Contract, accounts
 
 
 def deploy_collection_manager():
@@ -12,6 +9,7 @@ def deploy_collection_manager():
     Returns:
         str: address of the new contract
     """
+    account = get_account()
 
     # Deploy collection implementation
     collection = Collection.deploy(
@@ -28,7 +26,9 @@ def deploy_collection_manager():
     # Deploy collection manager proxy
     collection_manager_proxy = ERC1967Proxy.deploy(
         collection_manager.address,
-        encode_function_data(collection_manager.initialize, collection.address),
+        encode_function_data(
+            collection_manager.initialize, collection.address, account
+        ),
         {"from": account},
         publish_source=get_from_config("verify", False),
     )

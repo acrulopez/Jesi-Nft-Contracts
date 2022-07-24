@@ -1,7 +1,7 @@
 from brownie import network, accounts, config
 import eth_utils
 
-LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local"]
+LOCAL_BLOCKCHAIN_ENVIRONMENTS = [None, "development", "ganache-local"]
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-fork-dev"]
 OPENSEA_URL = "https://testnets.opensea.io/assets/{}/{}"
 IPFS_IMAGE_URL = "https://ipfs.io/ipfs/{}"

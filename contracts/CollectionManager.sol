@@ -6,11 +6,22 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
 import "./Collection.sol";
 
-contract CollectionManager is Initializable, UUPSUpgradeable, Ownable {
+contract CollectionManager is
+    Initializable,
+    UUPSUpgradeable,
+    Ownable,
+    AccessControl
+{
+    bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
+
     address payable[] public collections;
     address public collectionImplementation;
+
+    event CollectionCreated(address collection);
 
     function createCollection(
         string memory _name,
@@ -19,7 +30,7 @@ contract CollectionManager is Initializable, UUPSUpgradeable, Ownable {
         string memory _ipfsHash,
         uint256 _maxTotalSupply,
         uint256 _mintFee
-    ) public returns (address) {
+    ) public onlyRole(CREATOR_ROLE) returns (address) {
         bytes memory initializeData = abi.encodeWithSelector(
             Collection.initialize.selector,
             _name,
@@ -35,12 +46,18 @@ contract CollectionManager is Initializable, UUPSUpgradeable, Ownable {
             initializeData
         );
         collections.push(payable(newCollection));
+        emit CollectionCreated(address(newCollection));
         return address(newCollection);
     }
 
-    function initialize(address _collectionImplementation) public initializer {
+    function initialize(address _collectionImplementation, address creator)
+        public
+        initializer
+    {
         collectionImplementation = _collectionImplementation;
         _transferOwnership(_msgSender());
+        _setupRole(CREATOR_ROLE, _msgSender());
+        _setupRole(CREATOR_ROLE, creator);
     }
 
     function upgradeAllCollectionImplementation(address newImplementation)
