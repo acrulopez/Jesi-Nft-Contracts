@@ -27,7 +27,9 @@ def deploy_collection_manager():
     collection_manager_proxy = ERC1967Proxy.deploy(
         collection_manager.address,
         encode_function_data(
-            collection_manager.initialize, collection.address, account
+            collection_manager.initialize,
+            collection.address,
+            account,  # TODO set Jesi account
         ),
         {"from": account},
         publish_source=get_from_config("verify", False),

@@ -20,6 +20,7 @@ contract CollectionManager is
 
     address payable[] public collections;
     address public collectionImplementation;
+    mapping(string => bool) public ipfsHashes;
 
     event CollectionCreated(address collection);
 
@@ -28,16 +29,21 @@ contract CollectionManager is
         string memory _token,
         string memory _description,
         string memory _ipfsHash,
-        uint256 _maxTotalSupply,
+        uint256 _maxSupply,
         uint256 _mintFee
     ) public onlyRole(CREATOR_ROLE) returns (address) {
+        require(
+            !ipfsHashes[_ipfsHash],
+            "This IPFS hash has already been added to a collection."
+        );
+
         bytes memory initializeData = abi.encodeWithSelector(
             Collection.initialize.selector,
             _name,
             _token,
             _description,
             _ipfsHash,
-            _maxTotalSupply,
+            _maxSupply,
             _mintFee
         );
 
@@ -46,6 +52,7 @@ contract CollectionManager is
             initializeData
         );
         collections.push(payable(newCollection));
+        ipfsHashes[_ipfsHash] = true;
         emit CollectionCreated(address(newCollection));
         return address(newCollection);
     }
