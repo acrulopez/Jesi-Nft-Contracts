@@ -29,6 +29,7 @@ contract CollectionManager is
         string memory _token,
         string memory _description,
         string memory _ipfsHash,
+        string memory _contractURI,
         uint256 _maxSupply,
         uint256 _mintFee
     ) public onlyRole(CREATOR_ROLE) returns (address) {
@@ -43,6 +44,7 @@ contract CollectionManager is
             _token,
             _description,
             _ipfsHash,
+            _contractURI,
             _maxSupply,
             _mintFee
         );

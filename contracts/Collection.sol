@@ -17,6 +17,7 @@ contract Collection is
     string private __symbol;
     string public description;
     string public ipfsHash;
+    string public contractURI;
     uint256 public maxTotalSupply;
     uint256 public mintFee;
     uint256 public totalSupply;
@@ -28,6 +29,7 @@ contract Collection is
         string memory _token,
         string memory _description,
         string memory _ipfsHash,
+        string memory _contractURI,
         uint256 _maxTotalSupply,
         uint256 _mintFee
     ) public initializer {
@@ -35,6 +37,7 @@ contract Collection is
         __symbol = _token;
         description = _description;
         ipfsHash = _ipfsHash;
+        contractURI = _contractURI;
         maxTotalSupply = _maxTotalSupply;
         mintFee = _mintFee;
         _transferOwnership(_msgSender());

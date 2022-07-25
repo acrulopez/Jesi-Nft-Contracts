@@ -14,12 +14,13 @@ def deployments():
 
 @pytest.fixture
 def collection_arguments():
-    # [name, symbol, description, ipfsHash, maxTotalSupply, mintFee]
+    # [name, symbol, description, ipfsHash, contractURI, maxTotalSupply, mintFee]
     return [
         "collection_name",
         "collection_symbol",
         "description",
         "hash on ipfs",
+        "contract uri",
         5,
         1,
     ]
