@@ -20,21 +20,19 @@ contract CollectionManager is
 
     address payable[] public collections;
     address public collectionImplementation;
-    mapping(string => bool) public ipfsHashes;
+    mapping(string => bool) public isContractUriCreated;
 
     event CollectionCreated(address collection);
 
     function createCollection(
         string memory _name,
         string memory _token,
-        string memory _description,
-        string memory _ipfsHash,
         string memory _contractURI,
         uint256 _maxSupply,
         uint256 _mintFee
     ) public onlyRole(CREATOR_ROLE) returns (address) {
         require(
-            !ipfsHashes[_ipfsHash],
+            !isContractUriCreated[_contractURI],
             "This IPFS hash has already been added to a collection."
         );
 
@@ -42,8 +40,6 @@ contract CollectionManager is
             Collection.initialize.selector,
             _name,
             _token,
-            _description,
-            _ipfsHash,
             _contractURI,
             _maxSupply,
             _mintFee
@@ -54,7 +50,7 @@ contract CollectionManager is
             initializeData
         );
         collections.push(payable(newCollection));
-        ipfsHashes[_ipfsHash] = true;
+        isContractUriCreated[_contractURI] = true;
         emit CollectionCreated(address(newCollection));
         return address(newCollection);
     }

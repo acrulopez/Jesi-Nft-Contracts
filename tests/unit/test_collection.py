@@ -50,10 +50,8 @@ def test_create_collection(skip_if_not_local, deployments, collection_arguments)
     getters = [
         collection_proxy.name,
         collection_proxy.symbol,
-        collection_proxy.description,
-        collection_proxy.ipfsHash,
         collection_proxy.contractURI,
-        collection_proxy.maxTotalSupply,
+        collection_proxy.maxSupply,
         collection_proxy.mintFee,
     ]
     for getter, value in zip(getters, collection_arguments):
@@ -89,7 +87,7 @@ def test_non_free_mint(skip_if_not_local, deployments, collection_arguments):
         "Collection", collection_address, collection.abi
     )
 
-    mint_cost = collection_arguments[6]
+    mint_cost = collection_arguments[4]
 
     with pytest.raises(exceptions.VirtualMachineError):
         tx = collection_proxy.mint(account, "", {"from": account})
@@ -134,7 +132,7 @@ def test_transfer_from(skip_if_not_local, deployments, collection_arguments):
         "Collection", collection_address, collection.abi
     )
     tx = collection_proxy.mint(
-        account, "", {"from": account, "value": collection_arguments[6]}
+        account, "", {"from": account, "value": collection_arguments[4]}
     )
 
     # Act
